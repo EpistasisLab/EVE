@@ -1,0 +1,141 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "EVE: ENSEMBL VEP on EC2",
+  "Parameters": {
+    "KeyName": {
+      "Description": "Key Pair name to use for instance access",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Default": "mykey"
+    },
+    "VPC": {
+      "Description": "Select VPC to use (or the default)",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "Subnet": {
+      "Description": "Select subnet ID to use (or the default)",
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "AttachVolume": {
+      "Description": "Should the VEP cache and plugin data volume be attached?",
+      "Type": "String",
+      "Default": "yes",
+      "AllowedValues": ["yes", "no"]
+    },
+    "VolumeSize": {
+      "Description": "Size needed for your VCF data (input and output).",
+      "Type": "Number",
+      "Default": 300,
+      "MinValue": 25,
+      "MaxValue": 3000
+    },
+    "EveInstanceType": {
+      "Description": "Instance type to use for EVE.",
+      "Type": "String",
+      "Default": "m4.large",
+      "AllowedValues": ["m4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge"]
+    }
+  },
+  "Conditions": {
+    "DoAttach": {"Fn::Equals": [{"Ref": "AttachVolume"}, "yes"]}
+  },
+  "Resources": {
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group allowing ingress from all IPs via TCP on port 22 only.",
+        "VpcId": {"Ref": "VPC"},
+        "SecurityGroupIngress": [{
+          "CidrIp": "0.0.0.0/0",
+          "FromPort": 22,
+          "IpProtocol": "tcp",
+          "ToPort": 22
+        }]
+      }
+    },
+    "IamRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["ec2.amazonaws.com"]
+              },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "ec2",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [{
+                "Effect" : "Allow",
+                "Action" : ["ec2:DescribeVolumes", "ec2:CreateSnapshot", "ec2:DescribeSnapshots", "ec2:DeleteSnapshot"],
+                "Resource": "*"
+              }]
+            }
+          }
+        ]
+      }
+    },
+    "IamInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [{"Ref": "IamRole"}]
+      }
+    },
+    "EVEserver": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "IamInstanceProfile": {"Ref": "IamInstanceProfile"},
+        "ImageId": "ami-31d84426",
+        "InstanceType": {"Ref": "EveInstanceType"},
+        "KeyName": {"Ref": "KeyName"},
+        "SecurityGroupIds": [{"Ref": "SecurityGroup"}],
+        "SubnetId": {"Ref": "Subnet"},
+	"UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
+          "#!/bin/bash -v\n",
+          "mkfs -t ext4 /dev/xvdg\n",
+	  "mkdir /annotation\n",
+	  "mount /dev/xvdg /annotation\n",
+	  "mount /dev/xvdb /data\n",
+      	  "echo \"/dev/xvdb /data ext4 defaults,nofail 0 2\" >> /etc/fstab\n",
+      	  "echo \"/dev/xvdg /annotation ext4 defaults,nofail 0 2\" >> /etc/fstab\n"
+        ]]}} 
+      }
+    },
+    "Volume": {
+      "Type": "AWS::EC2::Volume",
+      "Properties": {
+        "AvailabilityZone": {"Fn::GetAtt": ["EVEserver", "AvailabilityZone"]},
+        "Size": {"Ref": "VolumeSize"},
+        "VolumeType": "gp2"
+      }
+    },
+    "VolumeAttachment": {
+      "Type": "AWS::EC2::VolumeAttachment",
+      "Condition": "DoAttach",
+      "Properties": {
+        "Device": "/dev/xvdg",
+        "InstanceId": {"Ref": "EVEserver"},
+        "VolumeId": {"Ref": "Volume"}
+      }
+    }
+  },
+  "Outputs": {
+    "PublicName": {
+      "Value": {"Fn::GetAtt": ["EVEserver", "PublicDnsName"]},
+      "Description": "Public DNS name for connection via SSH as ec2-user"
+    },
+    "VolumeId": {
+      "Value": {"Ref": "Volume"},
+      "Description": "Attached EBS volume ID (you can make your own snapshots)."
+    }
+  }
+}
