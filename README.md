@@ -23,8 +23,7 @@ For the "EveInstanceType" parameter, select the EC2 instance type that you'd lik
 
 Next, you can select default VPC and subnet unless you have your own you'd like to use (e.g. to integrate into other virtual appliances and/or cloud services).  Select your instance type from the dropdown menu.
 
-You will need to select a keypair name for SSH access to your EC2 instance.  If you haven't generated one before, see this tutorial:
-http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+You will need to select a keypair name for SSH access to your EC2 instance.  If you haven't generated one before, see [the AWS User Guide for EC2 key pairs.](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
 
 Finally, select an EBS volume size that is at least 3x as big as your VCF file (uncompressed).  Allocate some extra space if you plan to do downstream analysis on the EVE EC2 instance itself, or to attach this EBS volume to a downstream appliance afterwards.
 
@@ -37,13 +36,14 @@ Once all this is complete, click next and AWS will let you associate an IAM role
 SSH connect to your instance using the key-pair file you used above.  Upload your data (e.g. SCP, aws s3 cp - but remember not to leave AWS credentials on the appliance if you take EBS snapshots for sharing).  Start annotation, for example:
 
 ###5. _Annotate variants_
+```bash
 variant_effect_predictor.pl --port 3337 --cache --vcf --no_stats --merged \
     --dir /data/.vep/ --dir_cache /data/.vep/ --dir_plugins /data/.vep/ --plugin GXA \
     --plugin GO --plugin CADD,/data/CADD/whole_genome_SNVs.tsv.gz,/data/CADD/InDels.tsv.gz \
     --plugin miRNA --plugin ExAC,/data/ExAC/ExAC.r0.3.1.sites.vep.vcf.gz \
     --fork $(nproc) --gmaf --buffer_size 50000 
     -i path/to/input_file.vcf -o path/to/output_file.vep.vcf
-    
+```
 ###6. _Clean up_
 
 After annotation is complete, you can download your data (e.g. SFTP, aws s3 cp - but remember not to leave AWS credentials on the appliance if you take EBS snapshots for sharing).  Then you can shutdown the stack from the CloudFormation web console by selecting your EVE stack and clicking "Delete Stack" under options.  You can optionally take a snapshot of the EBS volumes for further use.
