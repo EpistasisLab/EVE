@@ -3,7 +3,10 @@
 ###Copyright 2016 Brian S. Cole, PhD
 ####License: GPLv3+
 
-###Note: These examples work in the us-east-1 region.  The AMI image at the heart of the EVE CloudFormation template currently exists only in the us-east-1 region.  Efforts are underway to create a global mapping of AMI images in all regions around the world (except for GovCloud).
+> Note: using EVE requires an AWS account and will incur expenses. Users must pay for the AWS resources utilized.
+
+> Note: These examples work in the us-east-1 region.  The AMI image at the heart of the EVE CloudFormation template currently exists only in the us-east-1 region.  Efforts are underway to create a global mapping of AMI images in all regions around the world (except for GovCloud).
+
 
 #Quick Start
 
