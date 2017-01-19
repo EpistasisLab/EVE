@@ -21,6 +21,12 @@
       "Default": "yes",
       "AllowedValues": ["yes", "no"]
     },
+    "EncryptVolume": {
+      "Description": "Should your genetic data volume be encrypted?",
+      "Type": "String",
+      "Default": "yes",
+      "AllowedValues": ["yes", "no"]
+    },
     "VolumeSize": {
       "Description": "Size needed for your VCF data (input and output).",
       "Type": "Number",
@@ -36,7 +42,8 @@
     }
   },
   "Conditions": {
-    "DoAttach": {"Fn::Equals": [{"Ref": "AttachVolume"}, "yes"]}
+    "DoAttach": {"Fn::Equals": [{"Ref": "AttachVolume"}, "yes"]},
+    "DoEncrypt": {"Fn::Equals": [{"Ref": "EncryptVolume"}, "yes"]}
   },
   "Resources": {
     "SecurityGroup": {
