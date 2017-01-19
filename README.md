@@ -22,7 +22,9 @@ First, add a name for your stack that has meaning for you and your project - thi
 
 Next, if you plan to use the VEP cache (highly recommended!) and the plugins which require data on block storage (CADD, ExAC) select "Yes" on the "AttachVolume" parameter.  
 
-For the "EveInstanceType" parameter, select the EC2 instance type that you'd like to use.  The compute-optimized instances are both faster and more cost-efficient than general-purpose instance types, but the m4.large instance type was found to be the most cost-efficient (and the slowest) in real-world benchmarking using an unimputed GWAS dataset with ~5,000 genotypes (see EVE manuscript).  Depending on your workload, you might select a c4.4xlarge instance for rapid execution or an m4.large instance for a no-plugin background annotation job in a non-time-critical project (if such a thing exists).  
+For the "EveInstanceType" parameter, select the EC2 instance type that you'd like to use.  The compute-optimized instances are both faster and more cost-efficient than general-purpose instance types, but the m4.large instance type was found to be the most cost-efficient (and the slowest) in real-world benchmarking using an unimputed GWAS dataset with ~5,000 genotypes (see EVE manuscript).  Depending on your workload, you might select a c4.4xlarge instance for rapid execution or an m4.large instance for a no-plugin background annotation job in a non-time-critical project (if such a thing exists).
+
+You can optionally encrypt your EBS volume (that will contain your data input and output) with the "EncryptVolume" parameter.  This will use EBS encryption, which is a subservice offered by AWS.  IMPORTANT NOTE: you are responsible for keeping data secure on AWS under the shared responsibility model.
 
 Next, you can select default VPC and subnet unless you have your own you'd like to use (e.g. to integrate into other virtual appliances and/or cloud services).  Select your instance type from the dropdown menu.
 
