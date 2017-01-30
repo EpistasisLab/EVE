@@ -46,7 +46,7 @@ variant_effect_predictor.pl --port 3337 --cache --vcf --no_stats --merged \
     --dir /data/.vep/ --dir_cache /data/.vep/ --dir_plugins /data/.vep/ --plugin GXA \
     --plugin GO --plugin CADD,/data/CADD/whole_genome_SNVs.tsv.gz,/data/CADD/InDels.tsv.gz \
     --plugin miRNA --plugin ExAC,/data/ExAC/ExAC.r0.3.1.sites.vep.vcf.gz \
-    --fork $(nproc) --gmaf --buffer_size 50000 
+    --fork $(nproc) --gmaf --buffer_size 50000 \
     -i path/to/input_file.vcf -o path/to/output_file.vep.vcf
 ```
 ###6. _Clean up_
