@@ -53,7 +53,7 @@ variant_effect_predictor.pl --port 3337 --cache --vcf --no_stats --merged \
 
 After annotation is complete, you can download your data (e.g. SFTP, aws s3 cp - but remember not to leave AWS credentials on the appliance if you take EBS snapshots for sharing).  Then you can shutdown the stack from the CloudFormation web console by selecting your EVE stack and clicking "Delete Stack" under options.  You can optionally take a snapshot of the EBS volumes for further use.
 
-#Licenses
+# Licenses
 
 The hardware virtual machine (HVM) image refernced in the CloudFormation template contains software and data.  For software licenses, see the software directories within the image (e.g. ENSEMBL VEP is licensed under Apache 2.0, see https://github.com/Ensembl/ensembl-vep).  Tabix is licensed under the MIT/expat license: https://github.com/samtools/htslib/blob/develop/LICENSE
 
