@@ -1,7 +1,7 @@
 # EVE: Ensembl VEP on EC2
 
 ### Copyright 2016 Brian S. Cole, PhD
-#### License: GPLv3+
+#### License: GPLv3+ (applies to this repo only, see "Licenses" below for virtual machine data)
 
 > Note: using EVE requires an AWS account and will incur expenses. Users must pay for the AWS resources utilized.
 
@@ -52,6 +52,27 @@ variant_effect_predictor.pl --port 3337 --cache --vcf --no_stats --merged \
 ### 6. _Clean up_
 
 After annotation is complete, you can download your data (e.g. SFTP, aws s3 cp - but remember not to leave AWS credentials on the appliance if you take EBS snapshots for sharing).  Then you can shutdown the stack from the CloudFormation web console by selecting your EVE stack and clicking "Delete Stack" under options.  You can optionally take a snapshot of the EBS volumes for further use.
+
+#Licenses
+
+The hardware virtual machine (HVM) image refernced in the CloudFormation template contains software and data.  For software licenses, see the software directories within the image (e.g. ENSEMBL VEP is licensed under Apache 2.0, see https://github.com/Ensembl/ensembl-vep).  Tabix is licensed under the MIT/expat license: https://github.com/samtools/htslib/blob/develop/LICENSE
+
+Data licenses available for plugin data include the following:
+CADD: Free for noncommercial use, see http://cadd.gs.washington.edu/download
+ExAC: ODC, see http://exac.broadinstitute.org/terms
+
+Other plugins use external database connections.  See the EVE manuscript for data source details.
+
+#Citations:
+McLaren W, Gil L, Hunt SE, Riat HS, Ritchie GR, Thormann A, Flicek P, Cunningham F.
+The Ensembl Variant Effect Predictor.
+Genome Biology Jun 6;17(1):122. (2016)
+doi:10.1186/s13059-016-0974-4
+
+Kircher M, Witten DM, Jain P, O'Roak BJ, Cooper GM, Shendure J. A general framework for estimating the relative pathogenicity of human genetic variants. Nat Genet. 2014 Feb 2. doi: 10.1038/ng.2892. PubMed PMID: 24487276. 
+
+Li, Heng. “Tabix: Fast Retrieval of Sequence Features from Generic TAB-Delimited Files.” Bioinformatics 27.5 (2011): 718–719. PMC. Web. 14 Apr. 2017.
+
 
 
 
