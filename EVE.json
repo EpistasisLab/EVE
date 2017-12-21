@@ -111,6 +111,7 @@
           "mkfs -t ext4 /dev/xvdg\n",
 	  "mkdir /annotation\n",
 	  "mount /dev/xvdg /annotation\n",
+	  "chmod 777 /annotation\n",
 	  "mount /dev/xvdb /data\n",
       	  "echo \"/dev/xvdb /data ext4 defaults,nofail 0 2\" >> /etc/fstab\n",
       	  "echo \"/dev/xvdg /annotation ext4 defaults,nofail 0 2\" >> /etc/fstab\n"
